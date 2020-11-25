@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -14,7 +15,7 @@ public class TreeTraversal {
         Node(String item) {
             this.item = item;
         }
-        
+
         // Return a string representation of the node.
         public String toString() {
             return item;
@@ -30,45 +31,92 @@ public class TreeTraversal {
     private Node put(Node x, String item) {
         if (x == null) return new Node(item);
         int cmp = item.compareTo(x.item);
-        if      (cmp < 0) x.left  = put(x.left,  item);
+        if (cmp < 0) x.left = put(x.left, item);
         else if (cmp > 0) x.right = put(x.right, item);
         return x;
     }
 
     // Return the nodes of the tree traversed pre-order.
     public Iterable<Node> preOrder() {
-        ...
+
+        Queue<Node> q = new Queue<Node>();
+
+        if (root == null) {
+            return q;
+        }
+        Stack<Node> stack = new Stack<Node>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            Node current = stack.pop();
+            q.enqueue(current);
+
+            if (current.right != null) {
+                stack.push(current.right);
+            }
+
+            if (current.left != null) {
+                stack.push(current.left);
+            }
+
+        }
+        return q;
     }
 
-    // Helper for preOrder().
-    private void preOrder(Node x, Queue<Node> q) {
-        ...
-    }
 
     // Return the nodes of the tree traversed in-order.
     public Iterable<Node> inOrder() {
-        ...
+        Queue<Node> q = new Queue<Node>();
+
+        inOrder(root, q);
+        return q;
     }
 
     // Helper for inOrder().
     private void inOrder(Node x, Queue<Node> q) {
-        ...
+        if (x == null) {
+            return;
+        }
+        inOrder(x.left, q);
+        q.enqueue(x);
+        inOrder(x.right, q);
+
     }
 
-    // Return the nodes of the tree traversed post-order.
+
+    //Return the nodes of the tree traversed post-order.
     public Iterable<Node> postOrder() {
-        ...
+        Queue<Node> r = new Queue<Node>();
+
+        postOrder(root, r);
+        return r;
     }
 
     // Helper for postOrder().
-    private void postOrder(Node x, Queue<Node> q) {
-        ...
+    private void postOrder(Node x, Queue<Node> r) {
+        if (x == null) {
+            return;
+        }
+
+        postOrder(x.left, r);
+        postOrder(x.right, r);
+        r.enqueue(x);
     }
 
     // Return the nodes of the tree traversed level-order.
     public Iterable<Node> levelOrder() {
-        ...
+        Queue<Node> keys = new Queue<Node>();
+        Queue<Node> queue = new Queue<Node>();
+        queue.enqueue(root);
+        while (!queue.isEmpty()) {
+            Node x = queue.dequeue();
+            if (x == null) continue;
+            keys.enqueue(x);
+            queue.enqueue(x.left);
+            queue.enqueue(x.right);
+        }
+        return keys;
     }
+
 
     // Test client. [DO NOT EDIT]
     public static void main(String[] args) {
